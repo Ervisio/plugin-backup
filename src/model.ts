@@ -1,11 +1,13 @@
+import type { Destination } from '@ervisio/plugin-sdk/destinations';
 import type { JobInstance, JobSchedule } from '@ervisio/plugin-sdk';
 
 export type Unit = 'minutes' | 'hours' | 'days' | 'months';
 export type Period = { value: number; unit: Unit };
+export type LogConfig = { enabled: boolean; url: string; token?: string; hasToken?: boolean; clearToken?: boolean; backups: boolean; deletions: boolean; stream?: string; environment?: string };
 export type Database = { id: string; kind: 'postgres' | 'mysql' | 'sqlite'; name: string; host?: string; port?: number; user?: string; path?: string; password?: string; hasPassword?: boolean; clearPassword?: boolean };
-export type Plan = { id: string; name: string; mode: 'folders' | 'databases' | 'both'; folders: string[]; excludes?: string[]; databases: Database[]; destination: { connection: string; path: string }; frequency: Period; keepLast: number; maxAge?: Period; maxBytes: number; created?: string; nextDue?: string; anchorDay?: number };
+export type Plan = { logs?: LogConfig; id: string; name: string; mode: 'folders' | 'databases' | 'both'; folders: string[]; excludes?: string[]; databases: Database[]; destination: Destination; frequency: Period; keepLast: number; maxAge?: Period; maxBytes: number; created?: string; nextDue?: string; anchorDay?: number };
 export type Connection = { id: string; name: string; kind: 'sftp' | 'smb'; host: string; share?: string; path?: string };
-export type Status = { supported: boolean; platform: string; account?: string; reason?: string; clients?: Record<string, boolean>; spoolFree?: number; spoolReserve?: number; maxPlans?: number };
+export type Status = { features?: string[]; supported: boolean; platform: string; account?: string; reason?: string; clients?: Record<string, boolean>; spoolFree?: number; spoolReserve?: number; maxPlans?: number };
 export type Receipt = { id: string; jobId: string; started: string; ended?: string; status: string; archive?: string; sha256?: string; bytes?: number; files?: number; databases?: number; skippedLinks?: number; warnings?: string[]; error?: string };
 export type Snapshot = { status: Status; plans: Plan[]; connections: Connection[]; jobs: JobInstance[] };
 
@@ -14,7 +16,7 @@ export function token(): string {
 }
 
 export function emptyPlan(): Plan {
-  return { id: '', name: '', mode: 'folders', folders: [], databases: [], destination: { connection: '', path: '/' }, frequency: { value: 1, unit: 'days' }, keepLast: 7, maxBytes: 2 * 1024 ** 3 };
+  return { id: '', name: '', mode: 'folders', folders: [], databases: [], destination: { kind: 'local', connection: '', path: '' }, frequency: { value: 1, unit: 'days' }, keepLast: 7, maxBytes: 2 * 1024 ** 3 };
 }
 
 export function scheduleFor(plan: Plan): JobSchedule {
