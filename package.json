@@ -1,0 +1,22 @@
+{
+  "name": "ervisio-plugin-backup",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "build": "tsc --noEmit && vite build && ervisio-plugin-pack copy",
+    "dev": "ervisio-plugin-pack copy && vite build --watch",
+    "pack": "ervisio-plugin-pack pack",
+    "typecheck": "tsc --noEmit",
+    "release": "node .github/release.mjs",
+    "marketplace": "node .github/release.mjs register",
+    "test": "node --test --experimental-strip-types test/*.test.ts"
+  },
+  "devDependencies": {
+    "@ervisio/plugin-sdk": "github:Ervisio/plugin-sdk#v0.4.0",
+    "@types/react": "^18.3.31",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.6"
+  },
+  "license": "MIT"
+}

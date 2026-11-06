@@ -1,0 +1,34 @@
+# Release: Actions > Release > Run workflow, choose patch, minor or major
+# (and optionally type the release notes). The version, CHANGELOG.md, the tag
+# and the GitHub release are done for you, then the Ervisio registry is told;
+# a version that asks for no new permissions is in the marketplace minutes
+# later. Pushing a vX.Y.Z tag yourself still works.
+# The steps live in Ervisio/plugin-sdk (.github/workflows/plugin-release.yml).
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: 'Which part of the version goes up'
+        type: choice
+        options: [patch, minor, major]
+        default: patch
+      notes:
+        description: 'Release notes (empty: the commit subjects since the last release)'
+        type: string
+        required: false
+  push:
+    tags: ['v*.*.*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    uses: Ervisio/plugin-sdk/.github/workflows/plugin-release.yml@v0.4.0
+    with:
+      bump: ${{ github.event_name == 'workflow_dispatch' && inputs.bump || '' }}
+      notes: ${{ inputs.notes }}
+      ervisio-ref: v7.0.3
+    secrets: inherit
